@@ -1,1 +1,1 @@
-gcc main.c flist.c fltest.c 
+gcc *.c
