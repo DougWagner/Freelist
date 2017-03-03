@@ -22,6 +22,7 @@ int main() {
     printf( "fl_malloc returned pointer to %p\n", ptr6 );
     void * ptr7 = fl_malloc( 63187 );
     printf( "fl_malloc returned pointer to %p\n", ptr7 );
+    void * ptr = fl_malloc( 818374758347 );
     //run_tests();
     fl_uninstall_heap();
     return 0;
