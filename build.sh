@@ -1,1 +1,1 @@
-gcc src/*.c
+gcc src/*.c -g 
