@@ -8,7 +8,6 @@ typedef struct _flist_node { // free list node
 
 typedef struct _memobj_header {
     size_t allocated;
-    void * mem;
 } memobj_t;
 
 flnode_t * fl_init( void * , size_t );

@@ -34,7 +34,7 @@ void * fl_malloc( size_t size ) {
         }
         memobj_t * obj = fl_allocate_at_node( tmp, size );
         printf( "memory allocated - head moved to %p\n", head );
-        return obj->mem;
+        return ( void * ) obj + sizeof( memobj_t );
     }
     return NULL;
 }
