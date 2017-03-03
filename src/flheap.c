@@ -25,10 +25,7 @@ void * fl_malloc( size_t size ) {
         size_t oldsize = tmp->size;
         if ( tmp == head ) { // block found at head
             if ( head->next == NULL ) {
-                void * newhead = ( void * ) head + memsize;
-                head = newhead;
-                head->next = NULL;
-                head->size = oldsize - memsize;
+                head = fl_insert_new_node( head, memsize, oldsize );
             }
             else {
                 head = head->next;
@@ -36,10 +33,7 @@ void * fl_malloc( size_t size ) {
             printf( "head moved to %p\n", head );
         }
         else if ( tmp->next == NULL ) { // block found at list end
-            void * newnodeloc = ( void * ) tmp + memsize;
-            flnode_t * newnode = newnodeloc;
-            newnode->next = NULL;
-            newnode->size = oldsize - memsize;
+            flnode_t * newnode = fl_insert_new_node( tmp, memsize, oldsize );
             fl_unlink_node( tmp, head, newnode );
         }
         else { // block found in middle of list
@@ -48,10 +42,7 @@ void * fl_malloc( size_t size ) {
                 fl_unlink_node( tmp, head, tmp->next );
             }
             else {
-                void * newnodeloc = ( void * ) tmp + memsize;
-                flnode_t * newnode = newnodeloc;
-                newnode->next = tmp->next;
-                newnode->size = oldsize - memsize;
+                flnode_t * newnode = fl_insert_new_node( tmp, memsize, oldsize );
                 fl_unlink_node( tmp, head, newnode );
             }
         }
