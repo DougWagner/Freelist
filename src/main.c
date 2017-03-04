@@ -8,22 +8,27 @@
 
 int main() {
     fl_install_heap( HEAP_SIZE );
-    void * ptr1 = fl_malloc( 20 );
-    printf( "fl_malloc returned pointer to %p\n", ptr1 );
-    void * ptr2 = fl_malloc( 50 );
-    printf( "fl_malloc returned pointer to %p\n", ptr2 );
-    void * ptr3 = fl_malloc( 400 );
-    printf( "fl_malloc returned pointer to %p\n", ptr3 );
-    void * ptr4 = fl_malloc( 80 );
-    printf( "fl_malloc returned pointer to %p\n", ptr4 );
-    void * ptr5 = fl_malloc( 27 );
-    printf( "fl_malloc returned pointer to %p\n", ptr5 );
-    void * ptr6 = fl_malloc( 245 );
-    printf( "fl_malloc returned pointer to %p\n", ptr6 );
-    void * ptr7 = fl_malloc( 63187 );
-    printf( "fl_malloc returned pointer to %p\n", ptr7 );
-    void * ptr = fl_malloc( 818374758347 );
-    //run_tests();
+    size_t allocations[10] = { 20, 50, 400, 80, 128, 256, 88, 4096, 1181, 512 };
+    void * ptrs[10];
+    for ( size_t i = 0; i < 10; i++ ) {
+        ptrs[i] = fl_malloc_p( allocations[i] );
+    }
+
+    fl_free( ptrs[7] );
+    fl_free( ptrs[4] );
+    fl_free( ptrs[0] );
+    fl_debug_print();
+
+    void * newptr1 = fl_malloc_p( 200 );
+    fl_debug_print();
+    void * newptr2 = fl_malloc_p( 128 );
+    fl_debug_print();
+    void * newptr3 = fl_malloc_p( 10 );
+    fl_debug_print();
+    void * newptr4 = fl_malloc_p( 10 );
+    fl_debug_print();
+
+    run_tests();
     fl_uninstall_heap();
     return 0;
 }

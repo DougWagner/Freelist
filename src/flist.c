@@ -20,11 +20,11 @@ flnode_t * fl_insert_new_node( flnode_t * oldnode, size_t memsize, size_t oldsiz
 
 flnode_t * fl_get_next_free( flnode_t * head, size_t n ) {
     flnode_t * tmp = head;
-    while ( tmp->size <= n + sizeof( memobj_t ) && tmp->next != NULL ) {
+    while ( tmp->size < n + sizeof( memobj_t ) && tmp->next != NULL ) {
         tmp = tmp->next;
     }
     if ( tmp->next == NULL ) {
-        if ( tmp->size <= n + sizeof( memobj_t ) ) {
+        if ( tmp->size < n + sizeof( memobj_t ) ) {
             return NULL;
         }
     }
@@ -41,5 +41,14 @@ memobj_t * fl_allocate_at_node( flnode_t * node, size_t n ) {
 }
 
 void fl_unlink_node( flnode_t * target, flnode_t * head, flnode_t * next ) {
+    for ( ; head != NULL && head->next != target; head = head->next );
+    if ( head == NULL ) {
+        printf( "something very very bad happened and things are definitely broken. good luck.\n" );
+    }
+    head->next = next;
+}
 
+memobj_t * fl_get_block_memobj( void * ptr ) {
+    void * memobj_loc = ptr - sizeof( memobj_t );
+    return ( memobj_t * ) memobj_loc;
 }

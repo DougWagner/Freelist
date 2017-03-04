@@ -1,1 +1,1 @@
-gcc src/*.c -g 
+gcc src/*.c -g -Wall -Wextra

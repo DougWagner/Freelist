@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "flheap.h"
 #include "flist.h"
@@ -10,7 +11,7 @@ static flnode_t * head;
 void fl_install_heap( size_t heapsize ) {
     flheap = malloc( heapsize );
     head = fl_init( flheap, heapsize );
-    printf( "flheap installed at %p\n", flheap );
+    printf( "flheap installed at %p\n\n", flheap );
 }
 
 void fl_uninstall_heap( void ) {
@@ -18,13 +19,14 @@ void fl_uninstall_heap( void ) {
 }
 
 void * fl_malloc( size_t size ) {
+    printf( "the size requested is 0x%lx\n", size );
     flnode_t * tmp = fl_get_next_free( head, size );
     printf( "fl_get_next_free returned flnode_t at %p\n", tmp );
     if ( tmp != NULL ) {
         size_t memsize = sizeof( memobj_t ) + size;
         size_t oldsize = tmp->size;
         if ( tmp == head ) { // block found at head
-            if ( head->next == NULL ) {
+            if ( head->next == NULL || head->size >= oldsize - memsize ) {
                 head = fl_insert_new_node( head, memsize, oldsize );
             }
             else {
@@ -46,12 +48,39 @@ void * fl_malloc( size_t size ) {
                 fl_unlink_node( tmp, head, newnode );
             }
         }
+        printf( "total memory allocated is 0x%lx\n", memsize );
     }
     memobj_t * obj = fl_allocate_at_node( tmp, size );
-    printf( "memory allocated at %p\n", obj );
+    printf( "memory object allocated at %p\n", obj );
     return obj != NULL ? ( void * ) obj + sizeof( memobj_t ) : NULL;
 }
 
-void fl_free( void * ptr ) {
+void * fl_malloc_p( size_t size ) {
+    void * ptr = fl_malloc( size );
+    printf( "fl_malloc returned pointer to %p\n\n", ptr );
+    return ptr;
+}
 
+void fl_free( void * ptr ) {
+    uintptr_t ptr_loc = ( uintptr_t ) ptr;
+    flnode_t * node = head;
+    while ( node->next != NULL && ptr_loc > ( uintptr_t ) node->next ) { // loop to last node before ptr_loc
+        node = node->next;
+    }
+    memobj_t * obj = fl_get_block_memobj( ptr );
+    flnode_t * freenode = ( flnode_t * ) obj; // obj->allocated should be in the same memory location as freenode->size
+    if ( node == head ) { // block to free is before head
+        freenode->next = head;
+        head = freenode;
+    }
+}
+
+void fl_debug_print( void ) {
+    printf("printing list\n");
+    flnode_t * tmp = head;
+    for ( size_t i = 0; tmp != NULL; i++, tmp = tmp->next ) {
+        char * node = ( i == 0 ) ? "head" : "node";
+        printf("%s: %p - %s->size: %lx- %s->next: %p\n", node, tmp, node, tmp->size, node, tmp->next );
+    }
+    printf("\n");
 }
