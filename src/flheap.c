@@ -7,8 +7,10 @@
 
 static void * flheap;
 static flnode_t * head;
+static int debug;
 
-void fl_install_heap( size_t heapsize ) {
+void fl_install_heap( size_t heapsize, int debug_state ) {
+    debug = debug_state;
     flheap = malloc( heapsize );
     head = fl_init( flheap, heapsize );
     printf( "flheap installed at %p\n\n", flheap );
@@ -19,9 +21,9 @@ void fl_uninstall_heap( void ) {
 }
 
 void * fl_malloc( size_t size ) {
-    printf( "the size requested is 0x%lx\n", size );
+    if ( debug ) printf( "the size requested is 0x%lx\n", size );
     flnode_t * tmp = fl_get_next_free( head, size );
-    printf( "fl_get_next_free returned flnode_t at %p\n", tmp );
+    if ( debug ) printf( "fl_get_next_free returned flnode_t at %p\n", tmp );
     if ( tmp != NULL ) {
         size_t memsize = sizeof( memobj_t ) + size;
         size_t oldsize = tmp->size;
@@ -32,7 +34,7 @@ void * fl_malloc( size_t size ) {
             else {
                 head = head->next;
             }
-            printf( "head moved to %p\n", head );
+            if ( debug ) printf( "head moved to %p\n", head );
         }
         else if ( tmp->next == NULL ) { // block found at list end
             flnode_t * newnode = fl_insert_new_node( tmp, memsize, oldsize );
@@ -48,10 +50,10 @@ void * fl_malloc( size_t size ) {
                 fl_unlink_node( tmp, head, newnode );
             }
         }
-        printf( "total memory allocated is 0x%lx\n", memsize );
+        if ( debug ) printf( "total memory allocated is 0x%lx\n", memsize );
     }
     memobj_t * obj = fl_allocate_at_node( tmp, size );
-    printf( "memory object allocated at %p\n", obj );
+    if ( debug ) printf( "memory object allocated at %p\n\n", obj );
     return obj != NULL ? ( void * ) obj + sizeof( memobj_t ) : NULL;
 }
 
@@ -62,19 +64,24 @@ void * fl_malloc_p( size_t size ) {
 }
 
 void fl_free( void * ptr ) {
+    if ( debug ) printf( "pointer to free: %p\n", ptr );
     uintptr_t ptr_loc = ( uintptr_t ) ptr;
     flnode_t * node;
     for ( node = head; node->next != NULL && ptr_loc > ( uintptr_t ) node->next; node = node->next ); // loop to last node before ptr_loc
+    if ( debug ) printf( "node found at %p\n", node );
     memobj_t * obj = fl_get_block_memobj( ptr );
     flnode_t * freenode = ( flnode_t * ) obj; // obj->allocated should be in the same memory location as freenode->size
     if ( ptr_loc < ( uintptr_t ) head ) { // block to free is before head
         freenode->next = head;
         head = freenode;
+        if ( debug ) printf( "head moved to %p\n", head );
     }
     else {
         freenode->next = node->next;
         node->next = freenode;
+        if ( debug ) printf( "freenode inserted at %p\n", freenode );
     }
+    if ( debug ) printf( "checking for contiguous blocks and returning\n\n" );
     fl_merge_contiguous_blocks( head );
 }
 
