@@ -14,9 +14,16 @@ int main() {
         ptrs[i] = fl_malloc_p( allocations[i] );
     }
 
+    fl_debug_print();
     fl_free( ptrs[7] );
-    fl_free( ptrs[4] );
+    fl_debug_print();
     fl_free( ptrs[0] );
+    fl_debug_print();
+    fl_free( ptrs[4] );
+    fl_debug_print();
+    fl_free( ptrs[5] );
+    fl_debug_print();
+    fl_free( ptrs[6] );
     fl_debug_print();
 
     void * newptr1 = fl_malloc_p( 200 );

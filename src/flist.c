@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "flist.h"
 
@@ -19,10 +20,8 @@ flnode_t * fl_insert_new_node( flnode_t * oldnode, size_t memsize, size_t oldsiz
 }
 
 flnode_t * fl_get_next_free( flnode_t * head, size_t n ) {
-    flnode_t * tmp = head;
-    while ( tmp->size < n + sizeof( memobj_t ) && tmp->next != NULL ) {
-        tmp = tmp->next;
-    }
+    flnode_t * tmp;
+    for ( tmp = head; tmp->size < n + sizeof( memobj_t ) && tmp->next != NULL; tmp = tmp->next );
     if ( tmp->next == NULL ) {
         if ( tmp->size < n + sizeof( memobj_t ) ) {
             return NULL;
@@ -51,4 +50,13 @@ void fl_unlink_node( flnode_t * target, flnode_t * head, flnode_t * next ) {
 memobj_t * fl_get_block_memobj( void * ptr ) {
     void * memobj_loc = ptr - sizeof( memobj_t );
     return ( memobj_t * ) memobj_loc;
+}
+
+void fl_merge_contiguous_blocks( flnode_t * node ) {
+    for ( ; node != NULL; node = node->next ) {
+        if ( ( uintptr_t ) node + node->size == ( uintptr_t ) node->next ) {
+            node->size = node->size + node->next->size;
+            node->next = node->next->next;
+        }
+    }
 }

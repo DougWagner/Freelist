@@ -63,16 +63,19 @@ void * fl_malloc_p( size_t size ) {
 
 void fl_free( void * ptr ) {
     uintptr_t ptr_loc = ( uintptr_t ) ptr;
-    flnode_t * node = head;
-    while ( node->next != NULL && ptr_loc > ( uintptr_t ) node->next ) { // loop to last node before ptr_loc
-        node = node->next;
-    }
+    flnode_t * node;
+    for ( node = head; node->next != NULL && ptr_loc > ( uintptr_t ) node->next; node = node->next ); // loop to last node before ptr_loc
     memobj_t * obj = fl_get_block_memobj( ptr );
     flnode_t * freenode = ( flnode_t * ) obj; // obj->allocated should be in the same memory location as freenode->size
-    if ( node == head ) { // block to free is before head
+    if ( ptr_loc < ( uintptr_t ) head ) { // block to free is before head
         freenode->next = head;
         head = freenode;
     }
+    else {
+        freenode->next = node->next;
+        node->next = freenode;
+    }
+    fl_merge_contiguous_blocks( head );
 }
 
 void fl_debug_print( void ) {
