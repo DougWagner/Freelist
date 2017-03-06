@@ -9,7 +9,9 @@
 
 int main() {
     fl_install_heap( HEAP_SIZE, DEBUG );
-    run_tests();
+    if ( run_tests() == 1 ) {
+        printf( "Tests completed successfully\n" );
+    }
     fl_uninstall_heap();
     return 0;
 }
