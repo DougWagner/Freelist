@@ -17,6 +17,7 @@ int run_tests( void )
 {
     void ** _pointers_stored = (void**)malloc( sizeof(void*)*NUM_POINTERS_STORED );
 
+    size_t i = 0;
     for( i = 0; i < NUM_POINTERS_STORED; ++i )
     {
         _pointers_stored[i] = NULL;
@@ -103,7 +104,6 @@ int run_tests( void )
 
     }
 
-    size_t i = 0;
     for( i = 0; i < NUM_POINTERS_STORED; ++i )
     {
         if( _pointers_stored[i] == NULL )
