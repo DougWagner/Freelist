@@ -1,6 +1,7 @@
 // this file is also for you dean
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "fltest.h"
 #include "flist.h"
@@ -15,6 +16,7 @@
 
 int run_tests( void )
 {
+    srand( time( NULL ) );
     void ** _pointers_stored = (void**)malloc( sizeof(void*)*NUM_POINTERS_STORED );
 
     size_t i = 0;
@@ -33,13 +35,13 @@ int run_tests( void )
         }
 
 
-        for( i = NUM_POINTERS_STORED - 1; i < NUM_POINTERS_STORED; ++i ) // uses unsigned integer rollover to stop, may break if size_t is signed.
+        for( i = NUM_POINTERS_STORED - 1; i < NUM_POINTERS_STORED; --i ) // uses unsigned integer rollover to stop, may break if size_t is signed.
         {
             fl_free( _pointers_stored[i] );
             _pointers_stored[i] = NULL;
         }
     }
-
+    
 
     // random size allocation and random order deallocations
     if( 1 )
@@ -78,7 +80,7 @@ int run_tests( void )
         size_t numallocatons = 0;
         size_t i = 0;
 
-        for( i = 0; i < 12; ++i ) // NOTE: if this number is greater than 12 your code hangs.
+        for( i = 0; i < 0x1000; ++i )
         {
             if( _pointers_stored[numallocatons%2] != NULL )
             {

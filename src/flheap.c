@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "flheap.h"
 #include "flist.h"
@@ -60,6 +61,20 @@ void * fl_malloc( size_t size ) {
 void * fl_malloc_p( size_t size ) {
     void * ptr = fl_malloc( size );
     printf( "fl_malloc returned pointer to %p\n\n", ptr );
+    return ptr;
+}
+
+void * fl_calloc( size_t nmemb, size_t size ) {
+    void * ptr = fl_malloc( nmemb * size );
+    if ( ptr != NULL ) {
+        memset( ptr, 0, nmemb * size );
+    }
+    return ptr;
+}
+
+void * fl_calloc_p( size_t nmemb, size_t size ) {
+    void * ptr = fl_calloc( nmemb, size );
+    printf( "fl_calloc returned pointer to %p\n\n", ptr );
     return ptr;
 }
 
