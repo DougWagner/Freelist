@@ -26,7 +26,7 @@ int run_tests( void )
     }
 
     // same size worst case
-    if( 1 )
+    if( 0 )
     {
         size_t i = 0;
         for( i = 0; i < NUM_POINTERS_STORED; ++i )
@@ -36,12 +36,13 @@ int run_tests( void )
 
 
         for( i = NUM_POINTERS_STORED - 1; i < NUM_POINTERS_STORED; --i ) // uses unsigned integer rollover to stop, may break if size_t is signed.
+        //for( i = 0; i < NUM_POINTERS_STORED; i++ ) // either loop works
         {
             fl_free( _pointers_stored[i] );
             _pointers_stored[i] = NULL;
         }
+        fl_debug_print();
     }
-    
 
     // random size allocation and random order deallocations
     if( 1 )
@@ -50,12 +51,12 @@ int run_tests( void )
         size_t i = 0;
         for( i = 0; i < 512; ++i )
         {
-            _pointers_stored[numallocatons++] = fl_malloc( rand() % 1024 ); // random size is capped at 1024
+            _pointers_stored[numallocatons++] = fl_malloc( rand() % 1024 + 1 ); // random size is capped at 1024
         }
 
         // randomize the allocations order
         i = 0;
-        while( i < 1024 )
+        while( i < 8192 )
         {
             size_t a = rand()%numallocatons;
             size_t b = rand()%numallocatons;
@@ -65,22 +66,23 @@ int run_tests( void )
             ++i;
         }
 
-        for( i = 0; i < numallocatons; ++i ) // uses unsigned integer rollover to stop, may break if size_t is signed.
+        for( i = 0; i < numallocatons; ++i ) 
         {
             fl_free( _pointers_stored[i] );
             _pointers_stored[i] = NULL;
         }
+        fl_debug_print();
     }
 
     // rolling size increase allocation
-    if( 1 )
+    if( 0 )
     {
         size_t current_size = 1;
 
         size_t numallocatons = 0;
         size_t i = 0;
 
-        for( i = 0; i < 0x1000; ++i )
+        for( i = 0; i < 0x100; ++i )
         {
             if( _pointers_stored[numallocatons%2] != NULL )
             {
@@ -89,12 +91,12 @@ int run_tests( void )
                 _pointers_stored[numallocatons%2] = NULL;
             }
 
-            _pointers_stored[numallocatons%2] = fl_malloc( current_size++ ); // random size is capped at 1024
+            _pointers_stored[numallocatons%2] = fl_malloc( current_size++ );
 
             ++numallocatons;
         }
 
-        for( i = 0; i < NUM_POINTERS_STORED; ++i ) // uses unsigned integer rollover to stop, may break if size_t is signed.
+        for( i = 0; i < NUM_POINTERS_STORED; ++i ) 
         {
             if( _pointers_stored[i] == NULL )
             {
@@ -104,6 +106,7 @@ int run_tests( void )
             _pointers_stored[i] = NULL;
         }
 
+        fl_debug_print();
     }
 
     for( i = 0; i < NUM_POINTERS_STORED; ++i )

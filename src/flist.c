@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "flist.h"
+#include "flheap.h"
 
 flnode_t * fl_init( void * ptr, size_t heap_size ) {
     flnode_t * node = ptr;
@@ -52,11 +53,17 @@ memobj_t * fl_get_block_memobj( void * ptr ) {
     return ( memobj_t * ) memobj_loc;
 }
 
-void fl_merge_contiguous_blocks( flnode_t * node ) {
+int fl_merge_contiguous_blocks( flnode_t * node ) {
+    //printf( "debug fl_merge_contiguous_blocks\n" );
+    //fl_debug_print();
+    int merged = 0;
     for ( ; node != NULL; node = node->next ) {
         if ( ( uintptr_t ) node + node->size == ( uintptr_t ) node->next ) {
             node->size = node->size + node->next->size;
             node->next = node->next->next;
+            merged = 1;
         }
     }
+    //fl_debug_print();
+    return merged;
 }

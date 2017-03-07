@@ -55,6 +55,7 @@ void * fl_malloc( size_t size ) {
     }
     memobj_t * obj = fl_allocate_at_node( tmp, size );
     if ( debug ) printf( "memory object allocated at %p\n\n", obj );
+    if ( debug ) fl_debug_print();
     return obj != NULL ? ( void * ) obj + sizeof( memobj_t ) : NULL;
 }
 
@@ -97,7 +98,9 @@ void fl_free( void * ptr ) {
         if ( debug ) printf( "freenode inserted at %p\n", freenode );
     }
     if ( debug ) printf( "checking for contiguous blocks and returning\n\n" );
-    fl_merge_contiguous_blocks( head );
+    //if ( debug ) fl_debug_print();
+    while ( fl_merge_contiguous_blocks( head ) );
+    if ( debug ) fl_debug_print();
 }
 
 void fl_debug_print( void ) {
