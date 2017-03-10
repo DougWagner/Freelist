@@ -26,8 +26,10 @@ int run_tests( void )
     }
 
     // same size worst case
-    if( 0 )
+    if( 1 )
     {
+        printf( "same size worst case\n" );
+        getchar();
         size_t i = 0;
         for( i = 0; i < NUM_POINTERS_STORED; ++i )
         {
@@ -47,11 +49,13 @@ int run_tests( void )
     // random size allocation and random order deallocations
     if( 1 )
     {
+        printf( "random size allocation and deallocation\n" );
+        getchar();
         size_t numallocatons = 0;
         size_t i = 0;
-        for( i = 0; i < 512; ++i )
+        for( i = 0; i < 2048; ++i )
         {
-            _pointers_stored[numallocatons++] = fl_malloc( rand() % 1024 + 1 ); // random size is capped at 1024
+            _pointers_stored[numallocatons++] = fl_malloc( rand() % 512 + 1 ); // random size is capped at 1024
         }
 
         // randomize the allocations order
@@ -68,21 +72,85 @@ int run_tests( void )
 
         for( i = 0; i < numallocatons; ++i ) 
         {
+            if ( rand() % 2 == 0 && numallocatons < NUM_POINTERS_STORED ) { // dice roll
+                _pointers_stored[numallocatons] = fl_malloc( rand() % 512 + 1 ); 
+                size_t a = numallocatons;
+                size_t b = rand() % ( numallocatons - i );
+                void * tmp = _pointers_stored[a];
+                _pointers_stored[a] = _pointers_stored[i + b];
+                _pointers_stored[i + b] = tmp;
+                numallocatons++;
+            }
+            printf( "number deallocated: %lu\n", i );
             fl_free( _pointers_stored[i] );
             _pointers_stored[i] = NULL;
+            /*if ( i % 100 == 0 ) {
+                fl_debug_print();
+            }*/
         }
         fl_debug_print();
+        printf( "total allocated: %lu\n", numallocatons );
+        printf( "total deallocated: %lu\n", i );
+    }
+
+    // same size random allocation and deallocation
+    if ( 1 )
+    {
+        printf( "same size random allocation and deallocation\n" );
+        getchar();
+        size_t numallocatons = 0;
+        size_t i = 0;
+        for( i = 0; i < 2048 ; ++i )
+        {
+            _pointers_stored[numallocatons++] = fl_malloc( 0x80 ); // random size is capped at 1024
+        }
+
+        // randomize the allocations order
+        i = 0;
+        while( i < 8192 )
+        {
+            size_t a = rand()%numallocatons;
+            size_t b = rand()%numallocatons;
+            void * tmp = _pointers_stored[a];
+            _pointers_stored[a] = _pointers_stored[b];
+            _pointers_stored[b] = tmp;
+            ++i;
+        }
+
+        for( i = 0; i < numallocatons; ++i ) 
+        {
+            if ( rand() % 2 == 0 && numallocatons < NUM_POINTERS_STORED ) { // dice roll
+                _pointers_stored[numallocatons] = fl_malloc( 0x80 ); 
+                size_t a = numallocatons;
+                size_t b = rand() % ( numallocatons - i );
+                void * tmp = _pointers_stored[a];
+                _pointers_stored[a] = _pointers_stored[i + b];
+                _pointers_stored[i + b] = tmp;
+                numallocatons++;
+            }
+            printf( "number deallocated: %lu\n", i );
+            fl_free( _pointers_stored[i] );
+            _pointers_stored[i] = NULL;
+            /*if ( i % 100 == 0 ) {
+                fl_debug_print();
+            }*/
+        }
+        fl_debug_print();
+        printf( "total allocated: %lu\n", numallocatons );
+        printf( "total deallocated: %lu\n", i );
     }
 
     // rolling size increase allocation
-    if( 0 )
+    if( 1 )
     {
+        printf( "rolling size increase allocation\n" );
+        getchar();
         size_t current_size = 1;
 
         size_t numallocatons = 0;
         size_t i = 0;
 
-        for( i = 0; i < 0x100; ++i )
+        for( i = 0; i < 0x3fff; ++i )
         {
             if( _pointers_stored[numallocatons%2] != NULL )
             {

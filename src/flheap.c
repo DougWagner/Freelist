@@ -23,6 +23,9 @@ void fl_uninstall_heap( void ) {
 
 void * fl_malloc( size_t size ) {
     if ( debug ) printf( "the size requested is 0x%lx\n", size );
+    if ( size == 0 ) {
+        return NULL;
+    }
     flnode_t * tmp = fl_get_next_free( head, size );
     if ( debug ) printf( "fl_get_next_free returned flnode_t at %p\n", tmp );
     if ( tmp != NULL ) {
@@ -108,7 +111,7 @@ void fl_debug_print( void ) {
     flnode_t * tmp = head;
     for ( size_t i = 0; tmp != NULL; i++, tmp = tmp->next ) {
         char * node = ( i == 0 ) ? "head" : "node";
-        printf("%s: %p - %s->size: %lx- %s->next: %p\n", node, tmp, node, tmp->size, node, tmp->next );
+        printf("%s: %p - %s->size: %lx - %s->next: %p - %s + %s->size = %p \n", node, tmp, node, tmp->size, node, tmp->next, node, node, ( void * ) tmp + tmp->size );
     }
     printf("\n");
 }

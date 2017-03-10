@@ -22,7 +22,7 @@ flnode_t * fl_insert_new_node( flnode_t * oldnode, size_t memsize, size_t oldsiz
 
 flnode_t * fl_get_next_free( flnode_t * head, size_t n ) {
     flnode_t * tmp;
-    for ( tmp = head; tmp->size < n + sizeof( memobj_t ) && tmp->next != NULL; tmp = tmp->next );
+    for ( tmp = head; tmp->size < n + ( 2 * sizeof( memobj_t ) ) && tmp->next != NULL; tmp = tmp->next );
     if ( tmp->next == NULL ) {
         if ( tmp->size < n + sizeof( memobj_t ) ) {
             return NULL;
@@ -58,8 +58,11 @@ int fl_merge_contiguous_blocks( flnode_t * node ) {
     //fl_debug_print();
     int merged = 0;
     for ( ; node != NULL; node = node->next ) {
-        if ( ( uintptr_t ) node + node->size == ( uintptr_t ) node->next ) {
-            node->size = node->size + node->next->size;
+        uintptr_t nodeloc = ( uintptr_t ) node;
+        uintptr_t nextloc = ( uintptr_t ) node->next;
+        if ( nodeloc + node->size <= nextloc && nodeloc + node->size > nextloc - sizeof( memobj_t ) ) {
+            size_t fragment = nextloc - ( nodeloc + node->size );
+            node->size = node->size + node->next->size + fragment;
             node->next = node->next->next;
             merged = 1;
         }
