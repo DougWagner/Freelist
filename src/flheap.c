@@ -27,6 +27,7 @@ void * fl_malloc( size_t size ) {
         return NULL;
     }
     flnode_t * tmp = fl_get_next_free( head, size );
+    size_t extra = 0;
     if ( debug ) printf( "fl_get_next_free returned flnode_t at %p\n", tmp );
     if ( tmp != NULL ) {
         size_t memsize = sizeof( memobj_t ) + size;
@@ -54,9 +55,12 @@ void * fl_malloc( size_t size ) {
                 fl_unlink_node( tmp, head, newnode );
             }
         }
-        if ( debug ) printf( "total memory allocated is 0x%lx\n", memsize );
+        if ( oldsize - memsize <= sizeof( flnode_t ) ) {
+            extra = oldsize - memsize;
+        }
+        if ( debug ) printf( "total memory allocated is 0x%lx\n", memsize + extra );
     }
-    memobj_t * obj = fl_allocate_at_node( tmp, size );
+    memobj_t * obj = fl_allocate_at_node( tmp, size + extra );
     if ( debug ) printf( "memory object allocated at %p\n\n", obj );
     if ( debug ) fl_debug_print();
     return obj != NULL ? ( void * ) obj + sizeof( memobj_t ) : NULL;

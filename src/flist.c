@@ -15,6 +15,9 @@ flnode_t * fl_init( void * ptr, size_t heap_size ) {
 flnode_t * fl_insert_new_node( flnode_t * oldnode, size_t memsize, size_t oldsize ) {
     void * newnodeloc = ( void * ) oldnode + memsize;
     flnode_t * newnode = newnodeloc;
+    if ( oldsize - memsize <= sizeof( flnode_t ) && oldnode->next != NULL ) {
+        return oldnode->next;
+    }
     newnode->next = oldnode->next;
     newnode->size = oldsize - memsize;
     return newnode;
@@ -22,7 +25,7 @@ flnode_t * fl_insert_new_node( flnode_t * oldnode, size_t memsize, size_t oldsiz
 
 flnode_t * fl_get_next_free( flnode_t * head, size_t n ) {
     flnode_t * tmp;
-    for ( tmp = head; tmp->size < n + ( 2 * sizeof( memobj_t ) ) && tmp->next != NULL; tmp = tmp->next );
+    for ( tmp = head; tmp->size < n + sizeof( memobj_t ) && tmp->next != NULL; tmp = tmp->next );
     if ( tmp->next == NULL ) {
         if ( tmp->size < n + sizeof( memobj_t ) ) {
             return NULL;

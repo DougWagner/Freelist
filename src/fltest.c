@@ -81,7 +81,7 @@ int run_tests( void )
                 _pointers_stored[i + b] = tmp;
                 numallocatons++;
             }
-            printf( "number deallocated: %lu\n", i );
+            //printf( "number deallocated: %lu\n", i );
             fl_free( _pointers_stored[i] );
             _pointers_stored[i] = NULL;
             /*if ( i % 100 == 0 ) {
@@ -128,7 +128,7 @@ int run_tests( void )
                 _pointers_stored[i + b] = tmp;
                 numallocatons++;
             }
-            printf( "number deallocated: %lu\n", i );
+            //printf( "number deallocated: %lu\n", i );
             fl_free( _pointers_stored[i] );
             _pointers_stored[i] = NULL;
             /*if ( i % 100 == 0 ) {
