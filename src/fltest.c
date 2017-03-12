@@ -28,7 +28,7 @@ int run_tests( void )
     // same size worst case
     if( 1 )
     {
-        printf( "same size worst case\n" );
+        printf( "same size worst case - press enter to start\n" );
         getchar();
         size_t i = 0;
         for( i = 0; i < NUM_POINTERS_STORED; ++i )
@@ -43,17 +43,18 @@ int run_tests( void )
             fl_free( _pointers_stored[i] );
             _pointers_stored[i] = NULL;
         }
+        printf( "Test complete\n\n" );
         fl_debug_print();
     }
 
     // random size allocation and random order deallocations
     if( 1 )
     {
-        printf( "random size allocation and deallocation\n" );
+        printf( "random size allocation and deallocation - press enter to start\n" );
         getchar();
         size_t numallocatons = 0;
         size_t i = 0;
-        for( i = 0; i < 2048; ++i )
+        for( i = 0; i < 4096; ++i )
         {
             _pointers_stored[numallocatons++] = fl_malloc( rand() % 512 + 1 ); // random size is capped at 1024
         }
@@ -82,25 +83,25 @@ int run_tests( void )
                 numallocatons++;
             }
             //printf( "number deallocated: %lu\n", i );
-            fl_free( _pointers_stored[i] );
-            _pointers_stored[i] = NULL;
-            /*if ( i % 100 == 0 ) {
-                fl_debug_print();
-            }*/
+            if ( _pointers_stored[i] != NULL ) {
+                fl_free( _pointers_stored[i] );
+                _pointers_stored[i] = NULL;
+            }
         }
+        printf( "Test complete\n\n" );
         fl_debug_print();
         printf( "total allocated: %lu\n", numallocatons );
-        printf( "total deallocated: %lu\n", i );
+        printf( "total deallocated: %lu\n\n", i );
     }
 
     // same size random allocation and deallocation
     if ( 1 )
     {
-        printf( "same size random allocation and deallocation\n" );
+        printf( "same size random allocation and deallocation - press enter to start\n" );
         getchar();
         size_t numallocatons = 0;
         size_t i = 0;
-        for( i = 0; i < 2048 ; ++i )
+        for( i = 0; i < 4096 ; ++i )
         {
             _pointers_stored[numallocatons++] = fl_malloc( 0x80 ); // random size is capped at 1024
         }
@@ -129,21 +130,21 @@ int run_tests( void )
                 numallocatons++;
             }
             //printf( "number deallocated: %lu\n", i );
-            fl_free( _pointers_stored[i] );
-            _pointers_stored[i] = NULL;
-            /*if ( i % 100 == 0 ) {
-                fl_debug_print();
-            }*/
+            if ( _pointers_stored[i] != NULL ) {
+                fl_free( _pointers_stored[i] );
+                _pointers_stored[i] = NULL;
+            }
         }
+        printf( "Test complete\n\n" );
         fl_debug_print();
         printf( "total allocated: %lu\n", numallocatons );
-        printf( "total deallocated: %lu\n", i );
+        printf( "total deallocated: %lu\n\n", i );
     }
 
     // rolling size increase allocation
     if( 1 )
     {
-        printf( "rolling size increase allocation\n" );
+        printf( "rolling size increase allocation - press enter to start\n" );
         getchar();
         size_t current_size = 1;
 
@@ -173,7 +174,7 @@ int run_tests( void )
             fl_free( _pointers_stored[i] );
             _pointers_stored[i] = NULL;
         }
-
+        printf( "Test complete\n\n" );
         fl_debug_print();
     }
 

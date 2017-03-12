@@ -55,7 +55,7 @@ void * fl_malloc( size_t size ) {
                 fl_unlink_node( tmp, head, newnode );
             }
         }
-        if ( oldsize - memsize <= sizeof( flnode_t ) ) {
+        if ( oldsize - memsize <= sizeof( flnode_t ) && tmp->next->next != NULL ) {
             extra = oldsize - memsize;
         }
         if ( debug ) printf( "total memory allocated is 0x%lx\n", memsize + extra );

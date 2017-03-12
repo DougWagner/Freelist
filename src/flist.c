@@ -20,6 +20,7 @@ flnode_t * fl_insert_new_node( flnode_t * oldnode, size_t memsize, size_t oldsiz
     }
     newnode->next = oldnode->next;
     newnode->size = oldsize - memsize;
+    oldnode->next = newnode;
     return newnode;
 }
 
